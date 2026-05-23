@@ -1,0 +1,28 @@
+node_modules/
+Documentation/
+dist/
+.DS_Store
+*.log
+
+# Environment — commit .env.example, not .env
+.env
+.env.local
+
+# Auth session state
+.auth/
+
+# Config files with real values — commit *.example.js, not the real ones
+config/*.js
+!config/*.example.js
+
+# Test artifacts
+playwright-report/
+test-results/
+blob-report/
+*.zip
+*.tgz
+
+# Build cache
+*.tsbuildinfo
+.cache/
+coverage/

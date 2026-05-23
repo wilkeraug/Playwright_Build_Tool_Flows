@@ -1,0 +1,37 @@
+{
+  "name": "playwright-page-elements-extractor",
+  "version": "1.0.0",
+  "description": "Extract interactive DOM elements from web pages using Playwright and save them as structured JSON + Markdown for AI-powered test generation.",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "auth": "node -r ./scripts/load-env.cjs scripts/auth.js",
+    "auth:headed": "PWHEADLESS=false node -r ./scripts/load-env.cjs scripts/auth.js",
+    "extract": "npm run auth && node -r ./scripts/load-env.cjs scripts/extract.js",
+    "extract:headed": "npm run auth:headed && PWHEADLESS=false node -r ./scripts/load-env.cjs scripts/extract.js",
+    "analyze-clicks": "node -r ./scripts/load-env.cjs scripts/analyze-clicks.js",
+    "build-flow": "node -r ./scripts/load-env.cjs scripts/build-flows.js",
+    "build-flows": "node -r ./scripts/load-env.cjs scripts/build-flows.js",
+    "build-flows:homepage": "node -r ./scripts/load-env.cjs scripts/build-flows.js --target=homepage",
+    "create-playwright-project": "node scripts/create-playwright-project.js",
+    "generate-requirements": "node scripts/generate-requirements.js",
+    "clean-playwright-projects": "node scripts/clean-playwright-projects.js",
+    "clean": "rm -rf Documentation"
+  },
+  "keywords": [
+    "playwright",
+    "dom",
+    "elements",
+    "extractor",
+    "test-generation",
+    "ai",
+    "scraping",
+    "automation"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.44.0"
+  }
+}
