@@ -50,7 +50,6 @@ This folder controls what the tool should scan.
 - `config/auth.js` defines the login flow for authenticated pages.
 - `config/targets.example.js` is a safe example target config.
 - `config/auth.example.js` is a safe example auth config.
-- `config/flows.js` is currently intentionally empty because flows are generated from extracted data.
 
 The non-example `config/*.js` files are treated as local/private configuration and are ignored by Git. For a fresh clone, copy the examples before running commands:
 
