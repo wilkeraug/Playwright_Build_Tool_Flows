@@ -2,7 +2,7 @@
 
 Extract visible UI elements from real web pages with Playwright, then turn them into JSON reports, Markdown summaries, QA flow documents, requirements notes, and starter Playwright test projects.
 
-In plain English: this tool opens the pages you configure, looks for useful things like buttons, links, inputs, headings, images, forms, tables, and dialogs, then writes documentation that helps you understand what should be tested.
+This tool opens the pages you configure, looks for useful things like buttons, links, inputs, headings, images, forms, tables, and dialogs, then writes documentation that helps you understand what should be tested.
 
 ## Who This Is For
 
