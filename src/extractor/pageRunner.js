@@ -56,6 +56,21 @@ async function createContext(browser, target, authConfig) {
         ...(storageState ? { storageState } : {}),
     });
 }
+async function waitForConfiguredSelector(page, target, timeout) {
+    if (!target.waitForSelector)
+        return;
+    const selector = target.waitForSelector;
+    const state = target.waitForSelectorState ?? 'visible';
+    const selectorTimeout = target.waitForSelectorTimeout ?? timeout;
+    try {
+        await page.waitForSelector(selector, { state, timeout: selectorTimeout });
+    }
+    catch (err) {
+        if (!target.waitForSelectorOptional)
+            throw err;
+        logger.warn(`Optional selector not found for ${target.name}: ${selector}`);
+    }
+}
 export async function runExtraction(config, target, authConfig, browser) {
     const timeout = config.timeout ?? 30000;
     const context = await createContext(browser, target, authConfig);
@@ -65,9 +80,7 @@ export async function runExtraction(config, target, authConfig, browser) {
             waitUntil: target.waitUntil ?? 'domcontentloaded',
             timeout,
         });
-        if (target.waitForSelector) {
-            await page.waitForSelector(target.waitForSelector, { timeout });
-        }
+        await waitForConfiguredSelector(page, target, timeout);
         // Allow SPA frameworks time to settle after navigation events fire
         await page.waitForTimeout(4000);
         const elements = await extractElements(page);

@@ -272,6 +272,9 @@ const config = {
       url: 'https://example.com/dashboard',
       waitUntil: 'networkidle',
       waitForSelector: '[data-testid="dashboard-loaded"]',
+      waitForSelectorState: 'visible',
+      waitForSelectorTimeout: 10000,
+      waitForSelectorOptional: false,
       requiresAuth: true,
     },
     {
@@ -295,7 +298,10 @@ Important fields:
 - `name`: Short page name used in output folders.
 - `url`: The page URL.
 - `waitUntil`: Usually `domcontentloaded` or `networkidle`.
-- `waitForSelector`: Optional selector that must appear before extraction starts.
+- `waitForSelector`: Optional selector to wait for before extraction starts.
+- `waitForSelectorState`: Optional Playwright selector state, usually `visible` or `attached`. Defaults to `visible`.
+- `waitForSelectorTimeout`: Optional selector wait timeout in milliseconds. Defaults to the global `timeout`.
+- `waitForSelectorOptional`: Set to `true` when the selector is helpful but should not fail extraction if it is missing.
 - `requiresAuth`: Set to `true` for pages that need the saved login session.
 - `viewport`: Optional browser size for that page.
 
@@ -535,6 +541,7 @@ Try one or more of these:
 - Increase `timeout` in `config/targets.js`.
 - Change `waitUntil` from `networkidle` to `domcontentloaded`.
 - Add or fix `waitForSelector`.
+- For slow or conditional embeds, set `waitForSelectorState: 'attached'`, `waitForSelectorTimeout`, and `waitForSelectorOptional: true`.
 - Run `npm run extract:headed` to watch the page load.
 
 ### No Elements Are Found

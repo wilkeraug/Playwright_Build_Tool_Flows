@@ -18,6 +18,9 @@ const config = {
             url: 'https://example.com/dashboard',
             waitUntil: 'networkidle',
             waitForSelector: '[data-testid="dashboard-loaded"]',
+            waitForSelectorState: 'visible',
+            waitForSelectorTimeout: 10000,
+            waitForSelectorOptional: false,
             requiresAuth: true,
         },
         // Custom viewport

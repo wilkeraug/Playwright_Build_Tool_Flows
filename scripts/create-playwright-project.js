@@ -434,6 +434,45 @@ function pyFlowTest(flow, pageConfig, functionName) {
   return lines.join('\n');
 }
 
+function waitForSelectorSnippetJs(pageConfig) {
+  if (!pageConfig.waitForSelector) {
+    return null;
+  }
+  const options = {
+    state: pageConfig.waitForSelectorState ?? 'visible',
+    ...(pageConfig.waitForSelectorTimeout ? { timeout: pageConfig.waitForSelectorTimeout } : {}),
+  };
+  const waitLine = `await page.locator(${JSON.stringify(pageConfig.waitForSelector)}).first().waitFor(${JSON.stringify(options)});`;
+  if (!pageConfig.waitForSelectorOptional) {
+    return `    ${waitLine}`;
+  }
+  return [
+    '    try {',
+    `      ${waitLine}`,
+    '    } catch {',
+    `      console.warn(${JSON.stringify(`Optional selector not found for ${pageConfig.name}: ${pageConfig.waitForSelector}`)});`,
+    '    }',
+  ].join('\n');
+}
+
+function waitForSelectorSnippetPy(pageConfig) {
+  if (!pageConfig.waitForSelector) {
+    return [];
+  }
+  const state = pageConfig.waitForSelectorState ?? 'visible';
+  const timeout = pageConfig.waitForSelectorTimeout ? `, timeout=${pageConfig.waitForSelectorTimeout}` : '';
+  const waitLine = `page.locator(${JSON.stringify(pageConfig.waitForSelector)}).first.wait_for(state=${JSON.stringify(state)}${timeout})`;
+  if (!pageConfig.waitForSelectorOptional) {
+    return [`    ${waitLine}`];
+  }
+  return [
+    '    try:',
+    `        ${waitLine}`,
+    '    except TimeoutError:',
+    `        print(${JSON.stringify(`Optional selector not found for ${pageConfig.name}: ${pageConfig.waitForSelector}`)})`,
+  ];
+}
+
 function jsPageFile(pageConfig, flows) {
   const fileLines = [
     "import { test, expect } from '@playwright/test';",
@@ -443,7 +482,7 @@ function jsPageFile(pageConfig, flows) {
     `  test(${JSON.stringify(`smoke: ${pageConfig.name}`)}, async ({ page }) => {`,
     pageConfig.viewport ? `    await page.setViewportSize({ width: ${pageConfig.viewport.width}, height: ${pageConfig.viewport.height} });` : null,
     `    await page.goto(${JSON.stringify(pageConfig.url)}, { waitUntil: ${JSON.stringify(pageConfig.waitUntil ?? 'domcontentloaded')} });`,
-    pageConfig.waitForSelector ? `    await page.locator(${JSON.stringify(pageConfig.waitForSelector)}).first().waitFor({ state: 'visible' });` : null,
+    waitForSelectorSnippetJs(pageConfig),
     "    await expect(page.locator('body')).toBeVisible();",
     '  });',
     '',
@@ -455,7 +494,7 @@ function jsPageFile(pageConfig, flows) {
 
 function pyPageFile(pageConfig, flows) {
   const lines = [
-    'from playwright.sync_api import expect',
+    pageConfig.waitForSelectorOptional ? 'from playwright.sync_api import TimeoutError, expect' : 'from playwright.sync_api import expect',
     '',
     `def test_smoke_${pythonSlug(pageConfig.name)}(page):`,
   ];
@@ -463,9 +502,7 @@ function pyPageFile(pageConfig, flows) {
     lines.push(`    page.set_viewport_size({"width": ${pageConfig.viewport.width}, "height": ${pageConfig.viewport.height}})`);
   }
   lines.push(`    page.goto(${JSON.stringify(pageConfig.url)}, wait_until=${JSON.stringify(pageConfig.waitUntil ?? 'domcontentloaded')})`);
-  if (pageConfig.waitForSelector) {
-    lines.push(`    page.locator(${JSON.stringify(pageConfig.waitForSelector)}).first.wait_for(state="visible")`);
-  }
+  lines.push(...waitForSelectorSnippetPy(pageConfig));
   lines.push(`    expect(page.locator("body")).to_be_visible()`);
 
   for (const [index, flow] of flows.entries()) {
