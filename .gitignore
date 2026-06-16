@@ -1,24 +1,43 @@
 node_modules/
 Documentation/
+playwright-projects/
 dist/
 .DS_Store
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Environment — commit .env.example, not .env
 .env
 .env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+!.env.example
 
 # Auth session state
 .auth/
+*.storageState.json
+storageState.json
 
 # Config files with real values — commit *.example.js, not the real ones
 config/*.js
 !config/*.example.js
+config/*.cjs
+!config/*.example.cjs
+config/*.mjs
+!config/*.example.mjs
 
 # Test artifacts
 playwright-report/
 test-results/
 blob-report/
+playwright/.cache/
+screenshots/
+videos/
+traces/
 *.zip
 *.tgz
 
@@ -26,3 +45,4 @@ blob-report/
 *.tsbuildinfo
 .cache/
 coverage/
+.nyc_output/
